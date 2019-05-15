@@ -1,7 +1,10 @@
 package oop;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -9,6 +12,7 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
@@ -19,6 +23,7 @@ import java.util.Optional;
 public class Start extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
+        D6 die = new D6();
         GridPane root = new GridPane();
         primaryStage.setMinWidth(500);
         primaryStage.setMinHeight(500);
@@ -55,9 +60,8 @@ public class Start extends Application {
         }
 
         Collections.shuffle(players);
-
-
         System.out.println(players);
+
         Text turn = new Text("Praegu veeretab: " + players.get(0).getName());
         Text nimi1 = new Text(players.get(0).getName());
         Text nimi2 = new Text(players.get(1).getName());
@@ -68,8 +72,30 @@ public class Start extends Application {
         root.add(nimi2, 3, 0);
         root.add(score1, 0, 1);
         root.add(score2, 3, 1);
+
+
+        root.add(die.getDieFace(),1,1);
+        Button btn = new Button();
+        btn.setText("Roll Die");
+
+        btn.setOnAction((ActionEvent event) -> {
+            btn.setDisable(true);//Disable Button
+            Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(.3), (actionEvent) -> {
+                int roll = die.roll();
+                die.setDieFace(roll);
+            }));
+            timeline.setCycleCount(10);
+            timeline.play();
+            timeline.setOnFinished(actionEvent -> {
+                btn.setDisable(false);//Enable Button
+                players.get(0).addToScore(die.getLastRoll());
+                score1.setText("Score: " + players.get(0).getScore());
+            });
+        });
+        root.add(btn,0,3);
         primaryStage.setScene(scene);
         primaryStage.show();
+
     }
 
     public static void main(String[] args) {
