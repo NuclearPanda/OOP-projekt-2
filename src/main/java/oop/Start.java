@@ -61,8 +61,8 @@ public class Start extends Application {
         Text turn = new Text("Praegu veeretab: " + players.get(0).getName());
         Text nimi1 = new Text(players.get(0).getName());
         Text nimi2 = new Text(players.get(1).getName());
-        Text score1 = new Text(String.valueOf(players.get(0).getScore()));
-        Text score2 = new Text(String.valueOf(players.get(1).getScore()));
+        Text score1 = new Text("Score: " + players.get(0).getScore());
+        Text score2 = new Text("Score: " + players.get(1).getScore());
         root.add(nimi1, 0, 0);
         root.add(turn, 1, 0);
         root.add(nimi2, 3, 0);
@@ -81,8 +81,8 @@ public class Start extends Application {
         Dialog<Pair<String, String>> dialog = new Dialog<>();
         dialog.setTitle("Sisesta nimed");
         dialog.setHeaderText("Sisesta mängijate nimed");
-        ButtonType loginButtonType = new ButtonType("Valmis", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(loginButtonType, ButtonType.CANCEL);
+        ButtonType confirmNamesButton = new ButtonType("Valmis", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(confirmNamesButton, ButtonType.CANCEL);
 
         GridPane grid = new GridPane();
         grid.setHgap(10);
@@ -104,7 +104,7 @@ public class Start extends Application {
         Platform.runLater(nimi1::requestFocus);
 
         dialog.setResultConverter(dialogButton -> {
-            if (dialogButton == loginButtonType) {
+            if (dialogButton == confirmNamesButton) {
                 return new Pair<>(nimi1.getText(), nimi2.getText());
             }
             return null;
