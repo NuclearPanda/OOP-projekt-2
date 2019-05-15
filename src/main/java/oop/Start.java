@@ -91,8 +91,8 @@ public class Start extends Application {
         //System.out.println(players);
 
         /** Loome andmeväljad mida loodud paanidesse panna */
-        Text turn = new Text("Praegu veeretab: " + players.get(0).getName());
-        turn.setFont(Font.loadFont("file:font/segoepr.ttf", 20));
+        Text praeguseMängijaText = new Text("Praegu veeretab: " + players.get(0).getName());
+        praeguseMängijaText.setFont(Font.loadFont("file:font/segoepr.ttf", 20));
 
         Text nimi1 = new Text(players.get(0).getName());
         nimi1.setFont(Font.loadFont("file:font/segoepr.ttf", 14));
@@ -114,7 +114,7 @@ public class Start extends Application {
          * Kui vajutatakse nuppu Anna käik üle, siis kasutab meetodit changeplayer
          * */
         Button cancelButton = new Button("Anna käik üle");
-        cancelButton.setOnAction((ActionEvent event) -> changePlayer(nimed, turn));
+        cancelButton.setOnAction((ActionEvent event) -> changePlayer(nimed, praeguseMängijaText));
 
 
         /** Tegevused mis juhtuvad, kui vajutada 'Veereta täringut' */
@@ -150,7 +150,7 @@ public class Start extends Application {
                 if (die.getLastRoll() == 1) {
                     currentPlayer.resetScore();
                     scores[currentPlayerIndex].setText("Punktid: " + currentPlayer.getScore());
-                    changePlayer(nimed, turn);
+                    changePlayer(nimed, praeguseMängijaText);
 
                 // Lisa praegusele mängijale skoori
                 } else {
@@ -180,8 +180,8 @@ public class Start extends Application {
 
         gridPane.add(nimi1, 0, 1);
 
-        gridPane.add(turn, 1, 0);
-        GridPane.setHalignment(turn, HPos.CENTER);
+        gridPane.add(praeguseMängijaText, 1, 0);
+        GridPane.setHalignment(praeguseMängijaText, HPos.CENTER);
 
         gridPane.add(nimi2, 2, 1);
         GridPane.setHalignment(nimi2, HPos.RIGHT);
@@ -299,9 +299,9 @@ public class Start extends Application {
         Alert intro = new Alert(Alert.AlertType.INFORMATION);
         intro.setHeaderText("Sissejuhatus");
         intro.setContentText("Täringumäng: created by Jaanus and Johan. " +
-                "Täringumäng on mäng, kus sina ja su sõbrad veeretavad kordamööda teie poolt valitud täringut. " +
-                "Esimese asjane valige täring, peale seda sisestage mängijate nimed. " +
-                "Siis saate valida, mitu korda täringut veeretada. Kui veeretad 1, siis sinu skoor läheb 0. " +
+                "Täringumäng on mäng, kus sina ja su sõbrad veeretavad kordamööda täringut. " +
+                "Esimese asjane sisestage mängijate nimed. " +
+                "Siis saate hakata veeretama. Kui veeretad 1, siis sinu skoor läheb 0. " +
                 "Mängu eesmärk on saada skooriks 91. Kes saab esimesena skooriks 91 on mängu võitja.");
         intro.showAndWait();
     }
