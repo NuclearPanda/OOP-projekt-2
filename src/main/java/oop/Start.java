@@ -15,6 +15,11 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.util.Pair;
 
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -59,10 +64,8 @@ public class Start extends Application {
         //intro.showAndWait();
 
 
+
         List<Player> players = createPlayers(root);
-        if (players.size() == 0) {
-            System.exit(0);
-        }
 
         Collections.shuffle(players);
         System.out.println(players);
@@ -89,7 +92,6 @@ public class Start extends Application {
 
         Button rollButton = new Button();
         rollButton.setText("Roll Die");
-
         rollButton.setOnAction((ActionEvent event) -> { //TODO kood ilusaks
             cancelButton.setDisable(true);
             rollButton.setDisable(true);//Disable Button
@@ -99,6 +101,7 @@ public class Start extends Application {
             }));
             timeline.setCycleCount(10);
             timeline.play();
+
             timeline.setOnFinished(actionEvent -> {
                 rollButton.setDisable(false);//Enable Button
                 cancelButton.setDisable(false);
@@ -108,14 +111,24 @@ public class Start extends Application {
                     scores[currentPlayerIndex].setText("Score: " + currentPlayer.getScore());
                     changePlayer(nimed, turn);
                 } else {
-                    currentPlayer.addToScore(die.getLastRoll()*10);
+                    currentPlayer.addToScore(die.getLastRoll() * 10);
                     scores[currentPlayerIndex].setText("Score: " + currentPlayer.getScore());
                 }
-                if (currentPlayer.getScore() > 90){
-                    victory(currentPlayer.getName());
+                try {
+                    if (currentPlayer.getScore() > 90) {
+                        writeScoresToFile(players);
+                        victory(currentPlayer.getName());
+                    }
+                } catch (IOException e){
+                    Alert error = new Alert(Alert.AlertType.ERROR);
+                    error.setHeaderText("Error");
+                    error.setContentText("Tekkis viga logifaili salvestamisel, errori info on konsoolis");
+                    System.out.println(e);
+                    error.setOnHidden(event1 -> Platform.exit());
                 }
             });
         });
+
         root.add(rollButton, 0, 3);
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -161,8 +174,16 @@ public class Start extends Application {
         });
         Optional<Pair<String, String>> result = dialog.showAndWait();
         if (result.isPresent()) {
-            out.add(new Player(result.get().getKey(), 0));
-            out.add(new Player(result.get().getValue(), 0));
+            String esimene = result.get().getKey();
+            String teine = result.get().getValue();
+            if (esimene.trim().length() == 0){
+                esimene = "mängija 1";
+            }
+            if (teine.trim().length() == 0){
+                teine = "mängija 2";
+            }
+            out.add(new Player(esimene, 0));
+            out.add(new Player(teine, 0));
         }
         return out;
     }
@@ -178,11 +199,21 @@ public class Start extends Application {
         }
     }
 
-    private void victory(String nimi){
+    private void victory(String nimi) {
         Alert win = new Alert(Alert.AlertType.INFORMATION);
         win.setHeaderText("Palju õnne");
         win.setContentText("Võitis mängija " + nimi);
         win.setOnHidden(event -> Platform.exit());
         win.show();
+    }
+
+    private void writeScoresToFile(List<Player> players) throws IOException {
+        try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("skoorid.txt", true), StandardCharsets.UTF_8))) {
+            bw.write("Mängija " + players.get(currentPlayerIndex).getName() + " võitis mängijat " +
+                    players.get(1 - currentPlayerIndex).getName() + " skooriga "
+                    + players.get(currentPlayerIndex).getScore() + " : "
+                    + players.get(1 - currentPlayerIndex).getScore());
+            bw.newLine();
+        }
     }
 }

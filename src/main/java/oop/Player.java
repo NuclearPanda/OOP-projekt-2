@@ -17,6 +17,9 @@ public class Player {
         this.score = score;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public void addToScore(int roll) {
         score += roll;
