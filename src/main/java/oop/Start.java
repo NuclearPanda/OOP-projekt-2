@@ -21,9 +21,14 @@ import java.util.List;
 import java.util.Optional;
 
 public class Start extends Application {
+    private int currentPlayerIndex = 0;
+
     @Override
     public void start(Stage primaryStage) throws Exception {
+
         D6 die = new D6();
+
+
         GridPane root = new GridPane();
         primaryStage.setMinWidth(500);
         primaryStage.setMinHeight(500);
@@ -41,7 +46,7 @@ public class Start extends Application {
         root.getColumnConstraints().addAll(columb1, columb2, columb3);
 
         root.setPadding(new Insets(200, 200, 200, 200));
-        Scene scene = new Scene(root, 600, 600);
+        Scene scene = new Scene(root, 1000, 1000);
 
 
         Alert intro = new Alert(Alert.AlertType.INFORMATION);
@@ -65,34 +70,53 @@ public class Start extends Application {
         Text turn = new Text("Praegu veeretab: " + players.get(0).getName());
         Text nimi1 = new Text(players.get(0).getName());
         Text nimi2 = new Text(players.get(1).getName());
+        Text[] nimed = new Text[]{nimi1, nimi2};
         Text score1 = new Text("Score: " + players.get(0).getScore());
         Text score2 = new Text("Score: " + players.get(1).getScore());
+        Text[] scores = new Text[]{score1, score2};
         root.add(nimi1, 0, 0);
         root.add(turn, 1, 0);
         root.add(nimi2, 3, 0);
         root.add(score1, 0, 1);
         root.add(score2, 3, 1);
+        root.add(die.getDieFace(), 1, 1);
+
+        Button cancelButton = new Button();
+        cancelButton.setOnAction((ActionEvent event) -> changePlayer(nimed, turn));
+        cancelButton.setText("Anna käik üle");
+        root.add(cancelButton, 2, 3);
 
 
-        root.add(die.getDieFace(),1,1);
-        Button btn = new Button();
-        btn.setText("Roll Die");
+        Button rollButton = new Button();
+        rollButton.setText("Roll Die");
 
-        btn.setOnAction((ActionEvent event) -> {
-            btn.setDisable(true);//Disable Button
-            Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(.3), (actionEvent) -> {
+        rollButton.setOnAction((ActionEvent event) -> { //TODO kood ilusaks
+            cancelButton.setDisable(true);
+            rollButton.setDisable(true);//Disable Button
+            Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(.1), (actionEvent) -> {
                 int roll = die.roll();
                 die.setDieFace(roll);
             }));
             timeline.setCycleCount(10);
             timeline.play();
             timeline.setOnFinished(actionEvent -> {
-                btn.setDisable(false);//Enable Button
-                players.get(0).addToScore(die.getLastRoll());
-                score1.setText("Score: " + players.get(0).getScore());
+                rollButton.setDisable(false);//Enable Button
+                cancelButton.setDisable(false);
+                Player currentPlayer = players.get(currentPlayerIndex);
+                if (die.getLastRoll() == 1) {
+                    currentPlayer.resetScore();
+                    scores[currentPlayerIndex].setText("Score: " + currentPlayer.getScore());
+                    changePlayer(nimed, turn);
+                } else {
+                    currentPlayer.addToScore(die.getLastRoll()*10);
+                    scores[currentPlayerIndex].setText("Score: " + currentPlayer.getScore());
+                }
+                if (currentPlayer.getScore() > 90){
+                    victory(root);
+                }
             });
         });
-        root.add(btn,0,3);
+        root.add(rollButton, 0, 3);
         primaryStage.setScene(scene);
         primaryStage.show();
 
@@ -143,5 +167,18 @@ public class Start extends Application {
         return out;
     }
 
+    private void changePlayer(Text[] nimed, Text turn) {
+        if (currentPlayerIndex == 1) {
+            currentPlayerIndex = 0;
+            turn.setText("Praegu veeretab: " + nimed[0].getText());
+        } else {
+            currentPlayerIndex = 1;
+            turn.setText("Praegu veeretab: " + nimed[1].getText());
 
+        }
+    }
+
+    private void victory(GridPane root){
+        System.exit(0);
+    }
 }
