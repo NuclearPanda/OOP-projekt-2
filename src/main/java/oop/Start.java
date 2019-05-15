@@ -85,7 +85,7 @@ public class Start extends Application {
         intro();
 
         /** Loome mängijate listi ja segame selle*/
-        List<Player> players = createPlayers(gridPane);
+        List<Player> players = createPlayers();
 
         Collections.shuffle(players);
         //System.out.println(players);
@@ -204,36 +204,39 @@ public class Start extends Application {
 
     }
 
+
     public static void main(String[] args) {
         launch(args);
     }
 
-    public static List<Player> createPlayers(GridPane root) {
+
+    /** Meetod mängijate loomiseks */
+    public static List<Player> createPlayers() {
         List<Player> out = new ArrayList<>();
         Dialog<Pair<String, String>> dialog = new Dialog<>();
-        dialog.setTitle("Sisesta nimed");
-        dialog.setHeaderText("Sisesta mängijate nimed");
+        dialog.setHeaderText("Sisestage nimed, et mängida");
         ButtonType confirmNamesButton = new ButtonType("Valmis", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(confirmNamesButton, ButtonType.CANCEL);
 
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
-        grid.setPadding(new Insets(20, 150, 10, 10));
+        grid.setPadding(new Insets(20, 10, 10, 10));
 
-
+        /** Sisestus väljad*/
         TextField nimi1 = new TextField();
-        nimi1.setPromptText("Esimene nimi");
+        nimi1.setPromptText("Sisesta nimi:");
         TextField nimi2 = new TextField();
-        nimi2.setPromptText("Teine nimi");
-        grid.add(new Label("Esimene nimi:"), 0, 0);
+        nimi2.setPromptText("Sisesta nimi");
+        grid.add(new Label("Mängija 1:"), 0, 0);
         grid.add(nimi1, 1, 0);
-        grid.add(new Label("Teine nimi:"), 0, 1);
+        grid.add(new Label("Mängija 2:"), 0, 1);
         grid.add(nimi2, 1, 1);
 
 
         dialog.getDialogPane().setContent(grid);
         Platform.runLater(nimi1::requestFocus);
+
 
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == confirmNamesButton) {
@@ -241,6 +244,7 @@ public class Start extends Application {
             }
             return null;
         });
+
         Optional<Pair<String, String>> result = dialog.showAndWait();
         if (result.isPresent()) {
             String esimene = result.get().getKey().toUpperCase();
@@ -257,6 +261,9 @@ public class Start extends Application {
         return out;
     }
 
+    /** Meetod mängija vahetuseks
+     * Kuna on vaid 2 mängijat, siis saab seda teha 1 lahutades currentplayer
+     * */
     private void changePlayer(Text[] nimed, Text turn) {
         if (currentPlayerIndex == 1) {
             currentPlayerIndex = 0;
@@ -268,6 +275,7 @@ public class Start extends Application {
         }
     }
 
+    /** Võidutingimus meetod */
     private void victory(String nimi) {
         Alert win = new Alert(Alert.AlertType.INFORMATION);
         win.setHeaderText("Palju õnne");
@@ -276,6 +284,7 @@ public class Start extends Application {
         win.show();
     }
 
+    /** Skooride failikirjutamine */
     private void writeScoresToFile(List<Player> players) throws IOException {
         try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("skoorid.txt", true), StandardCharsets.UTF_8))) {
             bw.write("Mängija " + players.get(currentPlayerIndex).getName() + " võitis mängijat " +
