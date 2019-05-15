@@ -7,7 +7,8 @@ import javafx.scene.image.Image;
 
 public class Animations {
     public static int animateDice(Dice dice, Canvas canvas) throws InterruptedException {
-        Image[] pildid = new Image[]{new Image("File:pilt/1.jpg"),
+        Image[] pildid = new Image[]{
+                new Image("File:pilt/1.jpg"),
                 new Image("File:pilt/2.jpg"),
                 new Image("File:pilt/3.jpg"),
                 new Image("File:pilt/4.jpg"),

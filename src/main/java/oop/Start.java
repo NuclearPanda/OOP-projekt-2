@@ -5,11 +5,16 @@ import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.RowConstraints;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -25,76 +30,105 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static javafx.scene.text.Font.getFontNames;
+import static javax.swing.text.StyleConstants.Italic;
+import static javax.swing.text.html.parser.DTDConstants.MS;
+
+
+/**
+ * Peaklass kust kõik tööle läheb
+ */
 public class Start extends Application {
+
     private int currentPlayerIndex = 0;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 
+        /** Võtame täringu*/
         D6 die = new D6();
 
-
-        GridPane root = new GridPane();
+        /** Loome paanid */
+        GridPane gridPane = new GridPane();
         primaryStage.setMinWidth(500);
-        primaryStage.setMinHeight(500);
-        root.setVgap(50);
-        root.setHgap(100);
+        primaryStage.setMinHeight(260);
+        gridPane.setVgap(20);
+        gridPane.setHgap(20);
+        gridPane.setPadding(new Insets(20, 20, 20, 20));
 
+        primaryStage.setTitle("Täringumäng");
 
+        /** Paanide scaling ja padding*/
         ColumnConstraints columb1 = new ColumnConstraints();
         columb1.setPercentWidth(33);
         ColumnConstraints columb2 = new ColumnConstraints();
         columb2.setPercentWidth(33);
         ColumnConstraints columb3 = new ColumnConstraints();
         columb3.setPercentWidth(33);
-
-        root.getColumnConstraints().addAll(columb1, columb2, columb3);
-
-        root.setPadding(new Insets(200, 200, 200, 200));
-        Scene scene = new Scene(root, 1000, 1000);
-
-
-        Alert intro = new Alert(Alert.AlertType.INFORMATION);
-        intro.setHeaderText("Sissejuhatus");
-        intro.setContentText("Täringumäng: created by Jaanus and Johan. " +
-                "Täringumäng on mäng, kus sina ja su sõbrad veeretavad kordamööda teie poolt valitud täringut. " +
-                "Esimese asjane valige täring, peale seda sisestage mängijate nimed. " +
-                "Siis saate valida, mitu korda täringut veeretada. Kui veeretad 1, siis sinu skoor läheb 0. " +
-                "Mängu eesmärk on saada skooriks 91. Kes saab esimesena skooriks 91 on mängu võitja.");
-        //intro.showAndWait();
+;
+        RowConstraints row1 = new RowConstraints();
+        row1.setPercentHeight(25);
+        RowConstraints row2 = new RowConstraints();
+        row2.setPercentHeight(25);
+        RowConstraints row3 = new RowConstraints();
+        row3.setPercentHeight(25);
+        RowConstraints row4 = new RowConstraints();
+        row4.setPercentHeight(25);
 
 
+        gridPane.getColumnConstraints().addAll(columb1, columb2, columb3);
+        gridPane.getRowConstraints().addAll(row1, row2, row3);
 
-        List<Player> players = createPlayers(root);
+        Scene scene = new Scene(gridPane, 600, 220);
+
+        /** Väljastame õpetuse */
+        intro();
+
+        /** Loome mängijate listi ja segame selle*/
+        List<Player> players = createPlayers(gridPane);
 
         Collections.shuffle(players);
-        System.out.println(players);
+        //System.out.println(players);
 
+        /** Loome andmeväljad mida loodud paanidesse panna */
         Text turn = new Text("Praegu veeretab: " + players.get(0).getName());
+        turn.setFont(Font.loadFont("file:font/segoepr.ttf", 20));
+
         Text nimi1 = new Text(players.get(0).getName());
+        nimi1.setFont(Font.loadFont("file:font/segoepr.ttf", 14));
+
+        Text score1 = new Text("Punktid: " + players.get(0).getScore());
+        score1.setFont(Font.loadFont("file:font/segoepr.ttf", 14));
+
         Text nimi2 = new Text(players.get(1).getName());
+        nimi2.setFont(Font.loadFont("file:font/segoepr.ttf", 14));
+
+        Text score2 = new Text("Punktid: " + players.get(1).getScore());
+        score2.setFont(Font.loadFont("file:font/segoepr.ttf", 14));
+
         Text[] nimed = new Text[]{nimi1, nimi2};
-        Text score1 = new Text("Score: " + players.get(0).getScore());
-        Text score2 = new Text("Score: " + players.get(1).getScore());
         Text[] scores = new Text[]{score1, score2};
-        root.add(nimi1, 0, 0);
-        root.add(turn, 1, 0);
-        root.add(nimi2, 3, 0);
-        root.add(score1, 0, 1);
-        root.add(score2, 3, 1);
-        root.add(die.getDieFace(), 1, 1);
 
-        Button cancelButton = new Button();
+        /** Loome nupu cancel ja määrame, mis seda vajutades juhtub
+         *
+         * Kui vajutatakse nuppu Anna käik üle, siis kasutab meetodit changeplayer
+         * */
+        Button cancelButton = new Button("Anna käik üle");
         cancelButton.setOnAction((ActionEvent event) -> changePlayer(nimed, turn));
-        cancelButton.setText("Anna käik üle");
-        root.add(cancelButton, 2, 3);
 
 
-        Button rollButton = new Button();
-        rollButton.setText("Roll Die");
+        /** Tegevused mis juhtuvad, kui vajutada 'Veereta täringut' */
+        // Loome nupu
+        Button rollButton = new Button("Veereta täringut");
+
+        // Kui vajutatakse, siis
         rollButton.setOnAction((ActionEvent event) -> { //TODO kood ilusaks
+
+            // disable nupud
             cancelButton.setDisable(true);
-            rollButton.setDisable(true);//Disable Button
+            rollButton.setDisable(true);
+
+            // veereta ka pane käima animatsioon
             Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(.1), (actionEvent) -> {
                 int roll = die.roll();
                 die.setDieFace(roll);
@@ -102,19 +136,32 @@ public class Start extends Application {
             timeline.setCycleCount(10);
             timeline.play();
 
+            // kui animatsioon on läbi, siis tee järgmised toimingud
             timeline.setOnFinished(actionEvent -> {
-                rollButton.setDisable(false);//Enable Button
+
+                // enable nupud
+                rollButton.setDisable(false);
                 cancelButton.setDisable(false);
+
+                // Leia praegusemängijaindeks
                 Player currentPlayer = players.get(currentPlayerIndex);
+
+                // Kui veeretati 1, siis nulli skoor ja vaheta mängija
                 if (die.getLastRoll() == 1) {
                     currentPlayer.resetScore();
-                    scores[currentPlayerIndex].setText("Score: " + currentPlayer.getScore());
+                    scores[currentPlayerIndex].setText("Punktid: " + currentPlayer.getScore());
                     changePlayer(nimed, turn);
+
+                // Lisa praegusele mängijale skoori
                 } else {
-                    currentPlayer.addToScore(die.getLastRoll() * 10);
-                    scores[currentPlayerIndex].setText("Score: " + currentPlayer.getScore());
+                    currentPlayer.addToScore(die.getLastRoll() *10);
+                    scores[currentPlayerIndex].setText("Punktid: " + currentPlayer.getScore());
                 }
+
+                // Kui kirjutamisel läks midagi valesti, siis anna veateade
                 try {
+
+                    // Kui skoor on üle 90, siis kutsu välja failikirjutamise ja võidumeetodid
                     if (currentPlayer.getScore() > 90) {
                         writeScoresToFile(players);
                         victory(currentPlayer.getName());
@@ -129,7 +176,29 @@ public class Start extends Application {
             });
         });
 
-        root.add(rollButton, 0, 3);
+        /** Lisa paanid andmeväljad paanidesse */
+
+        gridPane.add(nimi1, 0, 1);
+
+        gridPane.add(turn, 1, 0);
+        GridPane.setHalignment(turn, HPos.CENTER);
+
+        gridPane.add(nimi2, 2, 1);
+        GridPane.setHalignment(nimi2, HPos.RIGHT);
+
+        gridPane.add(score1, 0, 2);
+
+        gridPane.add(score2, 2, 2);
+        GridPane.setHalignment(score2, HPos.RIGHT);
+
+        gridPane.add(die.getDieFace(), 1, 2);
+        GridPane.setHalignment(die.getDieFace(), HPos.CENTER);
+
+        gridPane.add(rollButton, 0, 3);
+
+        gridPane.add(cancelButton, 2, 3);
+        GridPane.setHalignment(cancelButton, HPos.RIGHT);
+
         primaryStage.setScene(scene);
         primaryStage.show();
 
@@ -174,8 +243,8 @@ public class Start extends Application {
         });
         Optional<Pair<String, String>> result = dialog.showAndWait();
         if (result.isPresent()) {
-            String esimene = result.get().getKey();
-            String teine = result.get().getValue();
+            String esimene = result.get().getKey().toUpperCase();
+            String teine = result.get().getValue().toUpperCase();
             if (esimene.trim().length() == 0){
                 esimene = "mängija 1";
             }
@@ -216,4 +285,16 @@ public class Start extends Application {
             bw.newLine();
         }
     }
+
+    private void intro() {
+        Alert intro = new Alert(Alert.AlertType.INFORMATION);
+        intro.setHeaderText("Sissejuhatus");
+        intro.setContentText("Täringumäng: created by Jaanus and Johan. " +
+                "Täringumäng on mäng, kus sina ja su sõbrad veeretavad kordamööda teie poolt valitud täringut. " +
+                "Esimese asjane valige täring, peale seda sisestage mängijate nimed. " +
+                "Siis saate valida, mitu korda täringut veeretada. Kui veeretad 1, siis sinu skoor läheb 0. " +
+                "Mängu eesmärk on saada skooriks 91. Kes saab esimesena skooriks 91 on mängu võitja.");
+        intro.showAndWait();
+    }
+
 }
