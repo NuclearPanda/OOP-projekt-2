@@ -1,18 +1,29 @@
 package oop;
 
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+
+
 public class Animations {
-    public static int animateDice(Dice dice) throws InterruptedException {
-        int j = 1;
-        for (int i = 0; i < 50; i++) {
-            System.out.print(j + "   \r");
-            if (j == dice.getMax()) {
-                j = 1;
-            } else j++;
-            Thread.sleep(20);
+    public static int animateDice(Dice dice, Canvas canvas) throws InterruptedException {
+        Image[] pildid = new Image[]{new Image("File:pilt/1.jpg"),
+                new Image("File:pilt/2.jpg"),
+                new Image("File:pilt/3.jpg"),
+                new Image("File:pilt/4.jpg"),
+                new Image("File:pilt/5.jpg"),
+                new Image("File:pilt/6.jpg")};
+
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        for (int i = 0, j = 0; i < 50; i++, j++) {
+
+            if (j == 6) {
+                System.out.println(j);
+                j = 0;
+            }
+            Thread.sleep(200);
         }
-        System.out.print("   \r"); // clear last line
         int roll = dice.roll();
-        System.out.println(roll);
         return roll;
     }
 }

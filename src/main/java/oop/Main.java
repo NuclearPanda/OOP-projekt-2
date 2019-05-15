@@ -118,7 +118,8 @@ public class Main {
             }
             System.out.print("\n");
             for (int i = 0; i < mituKorda; i++) { // veeretamiskorra tsükkel ja kontrollid
-                int roll = Animations.animateDice(dice);
+                //int roll = Animations.animateDice(dice);
+                int roll = 0;
                 if (roll == 1) {
                     rolled1 = true;
                     players.get(index).resetScore();
