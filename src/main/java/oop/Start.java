@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,7 +23,7 @@ public class Start extends Application {
         primaryStage.setMinWidth(500);
         primaryStage.setMinHeight(500);
         root.setVgap(50);
-        root.setHgap(50);
+        root.setHgap(100);
 
 
         ColumnConstraints columb1 = new ColumnConstraints();
@@ -32,33 +33,41 @@ public class Start extends Application {
         ColumnConstraints columb3 = new ColumnConstraints();
         columb3.setPercentWidth(33);
 
-        root.getColumnConstraints().addAll(columb1,columb2,columb3);
+        root.getColumnConstraints().addAll(columb1, columb2, columb3);
 
-        root.setPadding(new Insets(200,200,200,200));
+        root.setPadding(new Insets(200, 200, 200, 200));
         Scene scene = new Scene(root, 600, 600);
 
 
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setHeaderText("Sissejuhatus");
-        alert.setContentText("Täringumäng: created by Jaanus and Johan. " +
+        Alert intro = new Alert(Alert.AlertType.INFORMATION);
+        intro.setHeaderText("Sissejuhatus");
+        intro.setContentText("Täringumäng: created by Jaanus and Johan. " +
                 "Täringumäng on mäng, kus sina ja su sõbrad veeretavad kordamööda teie poolt valitud täringut. " +
                 "Esimese asjane valige täring, peale seda sisestage mängijate nimed. " +
                 "Siis saate valida, mitu korda täringut veeretada. Kui veeretad 1, siis sinu skoor läheb 0. " +
                 "Mängu eesmärk on saada skooriks 91. Kes saab esimesena skooriks 91 on mängu võitja.");
-        alert.showAndWait();
+        //intro.showAndWait();
 
 
         List<Player> players = createPlayers(root);
-        if (players.size() == 0){
+        if (players.size() == 0) {
             System.exit(0);
         }
 
+        Collections.shuffle(players);
+
 
         System.out.println(players);
-        Text text = new Text(players.get(0).getName());
-        Text text1 = new Text(players.get(1).getName());
-        root.add(text,0,0);
-        root.add(text1,3,0);
+        Text turn = new Text("Praegu veeretab: " + players.get(0).getName());
+        Text nimi1 = new Text(players.get(0).getName());
+        Text nimi2 = new Text(players.get(1).getName());
+        Text score1 = new Text(String.valueOf(players.get(0).getScore()));
+        Text score2 = new Text(String.valueOf(players.get(1).getScore()));
+        root.add(nimi1, 0, 0);
+        root.add(turn, 1, 0);
+        root.add(nimi2, 3, 0);
+        root.add(score1, 0, 1);
+        root.add(score2, 3, 1);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -67,7 +76,7 @@ public class Start extends Application {
         launch(args);
     }
 
-    public static List<Player> createPlayers(GridPane root){
+    public static List<Player> createPlayers(GridPane root) {
         List<Player> out = new ArrayList<>();
         Dialog<Pair<String, String>> dialog = new Dialog<>();
         dialog.setTitle("Sisesta nimed");
@@ -91,7 +100,6 @@ public class Start extends Application {
         grid.add(nimi2, 1, 1);
 
 
-
         dialog.getDialogPane().setContent(grid);
         Platform.runLater(nimi1::requestFocus);
 
@@ -102,10 +110,12 @@ public class Start extends Application {
             return null;
         });
         Optional<Pair<String, String>> result = dialog.showAndWait();
-        if (result.isPresent()){
-            out.add(new Player(result.get().getKey(),0));
-            out.add(new Player(result.get().getValue(),0));
+        if (result.isPresent()) {
+            out.add(new Player(result.get().getKey(), 0));
+            out.add(new Player(result.get().getValue(), 0));
         }
         return out;
     }
+
+
 }
