@@ -112,7 +112,7 @@ public class Start extends Application {
                     scores[currentPlayerIndex].setText("Score: " + currentPlayer.getScore());
                 }
                 if (currentPlayer.getScore() > 90){
-                    victory(root);
+                    victory(currentPlayer.getName());
                 }
             });
         });
@@ -178,7 +178,11 @@ public class Start extends Application {
         }
     }
 
-    private void victory(GridPane root){
-        System.exit(0);
+    private void victory(String nimi){
+        Alert win = new Alert(Alert.AlertType.INFORMATION);
+        win.setHeaderText("Palju õnne");
+        win.setContentText("Võitis mängija " + nimi);
+        win.setOnHidden(event -> Platform.exit());
+        win.show();
     }
 }
