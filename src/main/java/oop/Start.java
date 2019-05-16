@@ -5,12 +5,17 @@ import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
@@ -20,10 +25,13 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.util.Pair;
 
+import java.awt.*;
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -278,6 +286,7 @@ public class Start extends Application {
     /** Võidutingimus meetod */
     private void victory(String nimi) {
         Alert win = new Alert(Alert.AlertType.INFORMATION);
+        win.setTitle("");
         win.setHeaderText("Palju õnne");
         win.setContentText("Võitis mängija " + nimi);
         win.setOnHidden(event -> Platform.exit());
@@ -296,14 +305,41 @@ public class Start extends Application {
     }
 
     private void intro() {
-        Alert intro = new Alert(Alert.AlertType.INFORMATION);
-        intro.setHeaderText("Sissejuhatus");
-        intro.setContentText("Täringumäng: created by Jaanus and Johan. " +
-                "Täringumäng on mäng, kus sina ja su sõbrad veeretavad kordamööda täringut. " +
-                "Esimese asjane sisestage mängijate nimed. " +
-                "Siis saate hakata veeretama. Kui veeretad 1, siis sinu skoor läheb 0. " +
-                "Mängu eesmärk on saada skooriks 91. Kes saab esimesena skooriks 91 on mängu võitja.");
-        intro.showAndWait();
+
+        ButtonType hindamisjuhend = new ButtonType("Hindamisjuhend", ButtonBar.ButtonData.OK_DONE);
+        ButtonType ok = new ButtonType("OK, nüüd pole tüng", ButtonBar.ButtonData.CANCEL_CLOSE);
+        ButtonType tegelt = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+
+        Alert intro = new Alert(Alert.AlertType.INFORMATION,
+                "Täringumäng on mäng, kus sina ja su sõber veeretavad kordamööda täringut ning eesmärgiks " +
+                        "on saada 91 punkti." +
+                "\nAlustuseks sisestage oma nimed." +
+                "\nSiis saate täringut veeretada. Kui veeretad 1, siis sinu skoor läheb 0!" +
+                "\nKui tunned, et järgmine veeretus võib tulla 1, siis parem anna veeretamiskord üle sõbrale! " +
+                "\n\nMõnusat mängu! :) " +
+                "\n\n PS: ANDRI! ANNA MEILE PUNKTE PALUN :( ", hindamisjuhend);
+
+        intro.setTitle("Täringumäng: created by Jaanus and Johan.");
+        intro.setHeaderText("Mängu tutvustus");
+
+
+        Optional<ButtonType> result = intro.showAndWait();
+
+        if (result.orElse(ok) == hindamisjuhend) {
+            getHostServices().showDocument("http://bit.do/hindamisjuhend2");
+            intro = new Alert(Alert.AlertType.WARNING,
+                    "Ups :D", ok);
+            intro.setHeaderText("See väärib küll lisapunkti :/ ");
+            result = intro.showAndWait();
+            if (result.orElse(hindamisjuhend) == ok) {
+                getHostServices().showDocument("https://i.imgflip.com/312okj.jpg");
+                intro = new Alert(Alert.AlertType.WARNING,
+                        "Kõik on katki katki katki.............." + " " +
+                                "Miks ma üldse üleval olen pool 4", tegelt);
+                intro.setHeaderText("Väärib juba kahte :D ");
+                result = intro.showAndWait();
+            }
+        }
     }
 
 }
