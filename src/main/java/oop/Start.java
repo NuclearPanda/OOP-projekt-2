@@ -322,7 +322,7 @@ public class Start extends Application {
         intro.setHeaderText("Mängu tutvustus");
 
 
-        Optional<ButtonType> result = intro.showAndWait();
+        intro.showAndWait();
 
 //        if (result.orElse(ok) == hindamisjuhend) {
 //            getHostServices().showDocument("http://bit.do/hindamisjuhend2");
