@@ -306,9 +306,9 @@ public class Start extends Application {
 
     private void intro() {
 
-        ButtonType hindamisjuhend = new ButtonType("Hindamisjuhend", ButtonBar.ButtonData.OK_DONE);
-        ButtonType ok = new ButtonType("OK, nüüd pole tüng", ButtonBar.ButtonData.CANCEL_CLOSE);
-        ButtonType tegelt = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+//        ButtonType hindamisjuhend = new ButtonType("Hindamisjuhend", ButtonBar.ButtonData.OK_DONE);
+//        ButtonType ok = new ButtonType("OK, nüüd pole tüng", ButtonBar.ButtonData.CANCEL_CLOSE);
+//        ButtonType tegelt = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
 
         Alert intro = new Alert(Alert.AlertType.INFORMATION,
                 "Täringumäng on mäng, kus sina ja su sõber veeretavad kordamööda täringut ning eesmärgiks " +
@@ -316,8 +316,7 @@ public class Start extends Application {
                 "\nAlustuseks sisestage oma nimed." +
                 "\nSiis saate täringut veeretada. Kui veeretad 1, siis sinu skoor läheb 0!" +
                 "\nKui tunned, et järgmine veeretus võib tulla 1, siis parem anna veeretamiskord üle sõbrale! " +
-                "\n\nMõnusat mängu! :) " +
-                "\n\n PS: ANDRI! ANNA MEILE PUNKTE PALUN :( ", hindamisjuhend);
+                "\n\nMõnusat mängu! :) ");
 
         intro.setTitle("Täringumäng: created by Jaanus and Johan.");
         intro.setHeaderText("Mängu tutvustus");
@@ -325,21 +324,21 @@ public class Start extends Application {
 
         Optional<ButtonType> result = intro.showAndWait();
 
-        if (result.orElse(ok) == hindamisjuhend) {
-            getHostServices().showDocument("http://bit.do/hindamisjuhend2");
-            intro = new Alert(Alert.AlertType.WARNING,
-                    "Ups :D", ok);
-            intro.setHeaderText("See väärib küll lisapunkti :/ ");
-            result = intro.showAndWait();
-            if (result.orElse(hindamisjuhend) == ok) {
-                getHostServices().showDocument("https://i.imgflip.com/312okj.jpg");
-                intro = new Alert(Alert.AlertType.WARNING,
-                        "Kõik on katki katki katki.............." + " " +
-                                "Miks ma üldse üleval olen pool 4", tegelt);
-                intro.setHeaderText("Väärib juba kahte :D ");
-                result = intro.showAndWait();
-            }
-        }
+//        if (result.orElse(ok) == hindamisjuhend) {
+//            getHostServices().showDocument("http://bit.do/hindamisjuhend2");
+//            intro = new Alert(Alert.AlertType.WARNING,
+//                    "Ups :D", ok);
+//            intro.setHeaderText("See väärib küll lisapunkti :/ ");
+//            result = intro.showAndWait();
+//            if (result.orElse(hindamisjuhend) == ok) {
+//                getHostServices().showDocument("https://i.imgflip.com/312okj.jpg");
+//                intro = new Alert(Alert.AlertType.WARNING,
+//                        "Kõik on katki katki katki.............." + " " +
+//                                "Miks ma üldse üleval olen pool 4", tegelt);
+//                intro.setHeaderText("Väärib juba kahte :D ");
+//                result = intro.showAndWait();
+//            }
+//        }
     }
 
 }
